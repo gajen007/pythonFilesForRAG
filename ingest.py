@@ -7,7 +7,8 @@ DB_DIR = os.path.expanduser("~/rag-test/chroma_db")
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 client = chromadb.PersistentClient(path=DB_DIR)
-collection = client.get_or_create_collection("docs")
+#collection = client.get_or_create_collection("docs")
+collection = client.get_or_create_collection("docs", metadata={"hnsw:space": "cosine"})
 
 def chunk_text(text, chunk_size=300, overlap=50):
     words = text.split()

@@ -9,7 +9,8 @@ DB_DIR = os.path.expanduser("~/rag-test/chroma_db")
 app = FastAPI()
 model = SentenceTransformer("all-MiniLM-L6-v2")
 client = chromadb.PersistentClient(path=DB_DIR)
-collection = client.get_or_create_collection("docs")
+#collection = client.get_or_create_collection("docs")
+collection = client.get_or_create_collection("docs", metadata={"hnsw:space": "cosine"})
 
 class QueryRequest(BaseModel):
     query: str
@@ -25,5 +26,6 @@ def retrieve(req: QueryRequest):
     return {
         "query": req.query,
         "chunks": results["documents"][0],
-        "sources": [m.get("source") for m in results["metadatas"][0]]
+        "sources": [m.get("source") for m in results["metadatas"][0]],
+        "distances": results["distances"][0]   #cosine
     }
